@@ -1,0 +1,40 @@
+name: Run Selenium Tests on Mac and Windows
+
+on:
+  workflow_dispatch:
+
+jobs:
+  selenium-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-latest, windows-latest ]
+        browser: [ chrome, firefox ]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          check-latest: true
+
+      - name: Run Selenium Tests
+        run: mvn clean test -Dbrowser=${{ matrix.browser }} -Dheadless=false -DrunMode=remote
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-${{ matrix.os }}-${{ matrix.browser }}
+          path: test-output/ExtentReport*
+
+      - name: Deploy HTML Report to GitHub Pages
+        if: ${{ matrix.os == 'macos-latest' && matrix.browser == 'chrome' && github.ref == 'refs/heads/main' }}
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: test-output/ExtentReport*
