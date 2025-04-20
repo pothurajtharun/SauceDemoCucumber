@@ -3,14 +3,17 @@ package stepDefinitions;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
 import pageObjects.LoginPage;
 import utils.TestContextSetup;
 
 public class LoginPageStepDefinition {
 
-  TestContextSetup testContextSetup;
+  private static final Logger log = LogManager.getLogger(HomePageStepDefinition.class);
 
+  TestContextSetup testContextSetup;
   LoginPage loginPage;
 
   public LoginPageStepDefinition(TestContextSetup testContextSetup) {

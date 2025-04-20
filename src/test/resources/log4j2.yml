@@ -1,0 +1,43 @@
+Configuration:
+  status: INFO
+  monitorInterval: 30
+  properties:
+    property:
+      - name: LOG_PATH
+        value: logs
+
+  Appenders:
+    Console:
+      name: ConsoleAppender
+      target: SYSTEM_OUT
+      PatternLayout:
+        disableAnsi: false
+        charset: UTF-8
+        pattern: "%highlight{[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %emojiLevel - %c{1} - %msg%n}"
+
+    File:
+      name: FileAppender
+      fileName: "${LOG_PATH}/logfile.log"
+      PatternLayout:
+        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %c{1} - %msg%n"
+
+    RollingFile:
+      - name: RollingFile_Appender
+        fileName: ${LOG_PATH}/rollingfile.log
+        filePattern: "logs/archive/rollingfile.log.%d{yyyy-MM-dd-hh-mm}.gz"
+        PatternLayout:
+          pattern: "%highlight{[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %emojiLevel - %c{1} - %msg%n}"
+        Policies:
+          SizeBasedTriggeringPolicy:
+            size: 5 KB
+        DefaultRollOverStrategy:
+          max: 30
+
+  Loggers:
+
+    root:
+      level: debug
+      AppenderRef:
+        - ref: ConsoleAppender
+        - ref: FileAppender
+        - ref: RollingFile_Appender
