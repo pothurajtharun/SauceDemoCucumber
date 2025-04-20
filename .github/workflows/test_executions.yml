@@ -23,18 +23,17 @@ jobs:
           check-latest: true
 
       - name: Run Selenium Tests
-        run: mvn clean test -Dbrowser=${{ matrix.browser }} -Dheadless=false -DrunMode=remote
+        run: mvn clean test -Dbrowser=${{ matrix.browser }} -Dheadless=true -DrunMode=local
 
       - name: Upload Test Results
-        if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.os }}-${{ matrix.browser }}
-          path: test-output/ExtentReport*
+          path: test-output/
 
       - name: Deploy HTML Report to GitHub Pages
         if: ${{ matrix.os == 'macos-latest' && matrix.browser == 'chrome' && github.ref == 'refs/heads/main' }}
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: test-output/ExtentReport*
+          publish_dir: test-output/
