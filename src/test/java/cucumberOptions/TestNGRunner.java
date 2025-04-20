@@ -2,7 +2,8 @@ package cucumberOptions;
 
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
-import org.testng.annotations.DataProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @CucumberOptions(
     features = "src/test/java/features",
@@ -16,9 +17,9 @@ import org.testng.annotations.DataProvider;
     })
 public class TestNGRunner extends AbstractTestNGCucumberTests {
 
-  @DataProvider
-  @Override
-  public Object[][] scenarios() {
-    return super.scenarios();
+  private static final Logger log = LogManager.getLogger(TestNGRunner.class);
+
+  static {
+    log.info("TestNG Runner has started.");
   }
 }

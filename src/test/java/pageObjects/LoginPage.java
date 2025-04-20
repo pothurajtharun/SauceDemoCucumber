@@ -1,24 +1,40 @@
 package pageObjects;
 
-import org.openqa.selenium.By;
+import Factory.PageObjectFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
-public class LoginPage {
-  WebDriver driver;
+public class LoginPage extends PageObjectFactory {
+
+  private static final Logger log = LogManager.getLogger(LoginPage.class);
 
   public LoginPage(WebDriver driver) {
-    this.driver = driver;
+    // Call the parent constructor to initialize WebDriver and PageFactory
+    super(driver);
   }
 
-  By usernameField = By.id("user-name");
-  By passwordField = By.id("password");
-  By loginButton = By.id("login-button");
-  By swagLabsTitle = By.className("app_logo");
+  @FindBy(id = "user-name")
+  WebElement usernameField;
+
+  @FindBy(id = "password")
+  WebElement passwordField;
+
+  @FindBy(id = "login-button")
+  WebElement loginButton;
+
+  @FindBy(className = "app_logo")
+  WebElement swagLabsTitle;
 
   public void verifyLogin(String email, String password) {
-    driver.findElement(usernameField).sendKeys(email);
-    driver.findElement(passwordField).sendKeys(password);
-    driver.findElement(loginButton).click();
+    log.debug("Entering username: {}", email);
+    usernameField.sendKeys(email);
+    log.info("Entering password.");
+    passwordField.sendKeys(password);
+    log.info("Clicking the login button.");
+    loginButton.click();
   }
 
   public String verifyLoginPageTitle() {
@@ -26,6 +42,6 @@ public class LoginPage {
   }
 
   public String verifyHomePageTitle() {
-    return driver.findElement(swagLabsTitle).getText();
+    return swagLabsTitle.getText();
   }
 }

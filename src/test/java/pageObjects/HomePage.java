@@ -2,37 +2,53 @@ package pageObjects;
 
 import static utils.PropertyReader.getValueByProperty;
 
-import java.util.Arrays;
+import Factory.PageObjectFactory;
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.openqa.selenium.By;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.testng.Assert;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class HomePage {
-  WebDriver driver;
+public class HomePage extends PageObjectFactory {
+
+  private static final Logger log = LogManager.getLogger(HomePage.class);
 
   public HomePage(WebDriver driver) {
-    this.driver = driver;
+    // Call the parent constructor to initialize the WebDriver and PageFactory
+    super(driver);
   }
 
-  By hamburgerMenu = By.cssSelector(".bm-burger-button");
-  By hamburgerMenuOptions = By.xpath("//*[contains(@id,'sidebar_link')]");
+  @FindBy(css = ".bm-burger-button")
+  WebElement hamburgerMenu;
+
+  @FindBy(xpath = "//*[contains(@id,'sidebar_link')]")
+  List<WebElement> hamburgerMenuOptions;
 
   public void clickOnTheHamburgerMenu() {
-    driver.findElement(hamburgerMenu).click();
+    log.info("Clicking on the hamburger menu.");
+    hamburgerMenu.click();
   }
 
   public List<String> getTheHamburgerMenuOptions() {
-    List<WebElement> menuElements = driver.findElements(hamburgerMenuOptions);
-    return menuElements.stream().map(WebElement::getText).collect(Collectors.toList());
+    log.info("Fetching hamburger menu options.");
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    wait.until(ExpectedConditions.visibilityOfAllElements(hamburgerMenuOptions));
+    return hamburgerMenuOptions.stream().map(WebElement::getText).collect(Collectors.toList());
   }
 
   public void validateTheHamburgerMenuOptions() {
+    log.info("Validating the hamburger menu options.");
     List<String> actualHamburgerOptions = getTheHamburgerMenuOptions();
-    String menuItemsProp = getValueByProperty("hamburger.menu.items");
-    List<String> expectedHamburgerOptions = Arrays.asList(menuItemsProp.split(","));
-    Assert.assertEquals(actualHamburgerOptions, expectedHamburgerOptions);
+    List<String> expectedHamburgerOptions =
+        List.of(getValueByProperty("hamburger.menu.items").split(","));
+    if (!actualHamburgerOptions.equals(expectedHamburgerOptions)) {
+      log.error("Hamburger menu options do not match expected values.");
+      throw new AssertionError("Hamburger menu options do not match expected values.");
+    }
   }
 }

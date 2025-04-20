@@ -1,12 +1,13 @@
 package utils;
 
 import Factory.PageObjectFactory;
-import org.openqa.selenium.WebDriver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class TestContextSetup {
 
-  public WebDriver driver;
-  public String homePageTitle;
+  private static final Logger log = LogManager.getLogger(PropertyReader.class);
+
   public PageObjectFactory pageObjectFactory;
   public TestBase testBase;
 
